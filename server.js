@@ -47,7 +47,7 @@ socketServer.on('connection', function (socket) {
 
 		for (const key in data.values) {
 			keys.push('`' + key + '`');
-			const value = data.values[key];
+			let value = data.values[key];
 
 			if (value === null) {
 				values.push('NULL');
