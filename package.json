@@ -4,10 +4,8 @@
   "description": "Sync databases through socket.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "server": "node index.js server",
-    "client": "node index.js client",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "node server.js",
+    "client": "node client.js"
   },
   "repository": {
     "type": "git",
