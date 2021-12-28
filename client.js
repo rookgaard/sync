@@ -25,35 +25,25 @@ socketClient.on('disconnect', function () {
 });
 
 function insertRow(newRow) {
-//	console.log(newRow);
-	var data = {
+	socketClient.emit('insert', {
 		table: newRow.table,
 		values: newRow.fields
-	};
-//	console.log(data);
-	socketClient.emit('insert', data);
+	});
 }
 
 function deleteRow(oldRow) {
-//	console.log(oldRow);
-	var data = {
+	socketClient.emit('delete', {
 		table: oldRow.table,
 		values: oldRow.fields
-	};
-//	console.log(data);
-	socketClient.emit('delete', data);
+	});
 }
 
-function updateRow(oldRow, newRow) {
-//	console.log(oldRow, newRow);
-	var data = {
+function updateRow(newRow) {
+	socketClient.emit('update', {
 		table: newRow.table,
 		changedColumns: newRow.changedColumns,
-		oldValues: oldRow.fields,
-		newValues: newRow.fields
-	};
-//	console.log(data);
-	socketClient.emit('update', data);
+		values: newRow.fields
+	});
 }
 
 function valuesChanged(oldRow, newRow, event) {
@@ -82,7 +72,7 @@ function valuesChanged(oldRow, newRow, event) {
 			return;
 		}
 
-		updateRow(oldRow, newRow);
+		updateRow(newRow);
 	}
 }
 

@@ -62,7 +62,7 @@ socketServer.on('connection', function (socket) {
 			}
 		}
 
-		const query = String.format(sql, data.table, keys.join(), values.join());
+		const query = String.format(sql, data.table, keys.join(', '), values.join(', '));
 		console.log(query);
 
 		if (connection) {
@@ -77,10 +77,78 @@ socketServer.on('connection', function (socket) {
 
 	socket.on('delete', function (data) {
 		console.log('delete', data);
+		const sql = 'DELETE FROM {0} WHERE {1}';
+
+		let conditions = [];
+
+		for (const key in data.values) {
+			const value = data.values[key];
+
+			if (value === null) {
+				continue;
+			}
+
+			conditions.push('`' + key + '` = "' + value + '"');
+
+			if (key === 'id' || conditions.length >= 3) {
+				break;
+			}
+		}
+
+		const query = String.format(sql, data.table, conditions.join(' AND '));
+		console.log(query);
+
+		if (connection) {
+			connection.query(query, function (error, result) {
+				if (error) {
+					console.log('connection.query error', error);
+					dbConnection();
+				}
+			});
+		}
 	});
 
 	socket.on('update', function (data) {
 		console.log('update', data);
+		const sql = 'UPDATE {0} SET {1} WHERE {2}';
+
+		let values = [];
+		let conditions = [];
+
+		for (const key of data.changedColumns) {
+			let value = data.values[key];
+			if (value === null) {
+				value = 'NULL';
+			}
+
+			values.push('`' + key + '` = "' + value + '"');
+		}
+
+		for (const key in data.values) {
+			const value = data.values[key];
+
+			if (value === null) {
+				continue;
+			}
+
+			conditions.push('`' + key + '` = "' + value + '"');
+
+			if (key === 'id' || conditions.length >= 3) {
+				break;
+			}
+		}
+
+		const query = String.format(sql, data.table, values.join(', '), conditions.join(' AND '));
+		console.log(query);
+
+		if (connection) {
+			connection.query(query, function (error, result) {
+				if (error) {
+					console.log('connection.query error', error);
+					dbConnection();
+				}
+			});
+		}
 	});
 });
 
