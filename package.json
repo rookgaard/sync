@@ -1,0 +1,26 @@
+{
+  "name": "sync",
+  "version": "0.1.0",
+  "description": "Sync databases through socket.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/rookgaard/sync.git"
+  },
+  "author": "Michal Korejwo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rookgaard/sync/issues"
+  },
+  "homepage": "https://github.com/rookgaard/sync#readme",
+  "dependencies": {
+    "mysql-events": "^0.0.1",
+    "sql-events-listener": "^1.0.0",
+    "underscore": "^1.13.2",
+    "zongji": "^0.5.1"
+  }
+}

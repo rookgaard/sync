@@ -1,0 +1,6 @@
+const config = {
+	dbPassword: '',
+	dbTables: '[]'
+};
+
+module.exports = config;

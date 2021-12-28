@@ -1,0 +1,7 @@
+/cache/
+/node_modules/
+/nbproject/
+/.vs/
+
+/package-lock.json
+/config.js
