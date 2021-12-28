@@ -13,4 +13,16 @@ socketServer.on('connection', function (socket) {
 	socket.on('test', function (data) {
 		console.log('test', data);
 	});
+
+	socket.on('insert', function (data) {
+		console.log('insert', data);
+	});
+
+	socket.on('delete', function (data) {
+		console.log('delete', data);
+	});
+
+	socket.on('update', function (data) {
+		console.log('update', data);
+	});
 });

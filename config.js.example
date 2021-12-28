@@ -1,5 +1,6 @@
 const config = {
 	dbPassword: '',
+	dbName: '',
 	dbTables: '[]',
 	master: false,
 	port: 3000,
