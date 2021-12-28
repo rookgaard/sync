@@ -2,7 +2,9 @@ const config = {
 	dbPassword: '',
 	dbName: '',
 	dbTables: '[]',
+	host: 'http://localhost',
 	port: 3000,
+	apiPassword: '',
 };
 
 module.exports = config;

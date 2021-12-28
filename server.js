@@ -5,7 +5,9 @@ const port = config.port ? config.port : 3000;
 const mysql = require('mysql');
 let connection;
 
-app.listen(port);
+app.listen(port, function () {
+	console.log('listening on port', app.address().port);
+});
 
 if (!String.format) {
 	String.format = function (format) {
@@ -32,7 +34,12 @@ function dbConnection() {
 }
 
 socketServer.on('connection', function (socket) {
+	console.log('socketServer', 'connection');
 	socket.on('insert', function (data) {
+		if (data.apiPassword !== config.apiPassword) {
+			return;
+		}
+
 		const sql = 'INSERT INTO `{0}` ({1}) VALUES({2})';
 
 		let keys = [];
@@ -44,12 +51,16 @@ socketServer.on('connection', function (socket) {
 
 			if (value === null) {
 				values.push('NULL');
+			} else if (typeof value === 'string' && value.indexOf('.000Z') > 0) {
+				value = value.replace('T', ' ').replace('.000Z', '');
+				values.push('"' + value + '"');
 			} else {
 				values.push('"' + value + '"');
 			}
 		}
 
 		const query = String.format(sql, data.table, keys.join(', '), values.join(', '));
+		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
@@ -62,6 +73,10 @@ socketServer.on('connection', function (socket) {
 	});
 
 	socket.on('delete', function (data) {
+		if (data.apiPassword !== config.apiPassword) {
+			return;
+		}
+
 		const sql = 'DELETE FROM `{0}` WHERE {1}';
 
 		let conditions = [];
@@ -81,6 +96,7 @@ socketServer.on('connection', function (socket) {
 		}
 
 		const query = String.format(sql, data.table, conditions.join(' AND '));
+		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
@@ -93,6 +109,10 @@ socketServer.on('connection', function (socket) {
 	});
 
 	socket.on('update', function (data) {
+		if (data.apiPassword !== config.apiPassword) {
+			return;
+		}
+
 		const sql = 'UPDATE `{0}` SET {1} WHERE {2}';
 
 		let values = [];
@@ -102,6 +122,8 @@ socketServer.on('connection', function (socket) {
 			let value = data.values[key];
 			if (value === null) {
 				value = 'NULL';
+			} else if (typeof value === 'string' && value.indexOf('.000Z') > 0) {
+				value = value.replace('T', ' ').replace('.000Z', '');
 			}
 
 			values.push('`' + key + '` = "' + value + '"');
@@ -122,6 +144,7 @@ socketServer.on('connection', function (socket) {
 		}
 
 		const query = String.format(sql, data.table, values.join(', '), conditions.join(' AND '));
+		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
@@ -131,6 +154,10 @@ socketServer.on('connection', function (socket) {
 				}
 			});
 		}
+	});
+
+	socket.on('disconnect', function (data) {
+		console.log('socket', 'disconnect');
 	});
 });
 
