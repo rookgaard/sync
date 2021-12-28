@@ -2,6 +2,7 @@
 /node_modules/
 /nbproject/
 /.vs/
+/logs/
 
 /package-lock.json
 /config.js
