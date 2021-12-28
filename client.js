@@ -11,19 +11,6 @@ const port = config.port ? config.port : 3000;
 
 const socketClient = require('socket.io-client')('http://localhost:' + port);
 
-socketClient.on('connect', function () {
-	console.log('socketClient', 'connect');
-	socketClient.emit('test', Date.now());
-});
-
-socketClient.on('event', function (data) {
-	console.log('socketClient', 'event', data);
-});
-
-socketClient.on('disconnect', function () {
-	console.log('socketClient', 'disconnect');
-});
-
 function insertRow(newRow) {
 	socketClient.emit('insert', {
 		table: newRow.table,
@@ -47,10 +34,6 @@ function updateRow(newRow) {
 }
 
 function valuesChanged(oldRow, newRow, event) {
-	if (event) {
-		console.log('event', event);
-	}
-
 	if (oldRow === null) {
 		if (tables.indexOf(newRow.table) < 0) {
 			return;

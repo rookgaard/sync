@@ -5,9 +5,7 @@ const port = config.port ? config.port : 3000;
 const mysql = require('mysql');
 let connection;
 
-app.listen(port, function () {
-	console.log('nasluchuje na porcie', app.address().port);
-});
+app.listen(port);
 
 if (!String.format) {
 	String.format = function (format) {
@@ -19,8 +17,6 @@ if (!String.format) {
 }
 
 function dbConnection() {
-	console.log('connecting db');
-
 	connection = mysql.createConnection({
 		host: config.dbHost ? config.dbHost : 'localhost',
 		user: config.dbUser ? config.dbUser : 'root',
@@ -31,22 +27,13 @@ function dbConnection() {
 	connection.connect(function (error) {
 		if (error) {
 			console.log('connection.connect error', error);
-		} else {
-			console.log('db connected');
 		}
 	});
 }
 
 socketServer.on('connection', function (socket) {
-	console.log('socketServer', 'connection');
-
-	socket.on('test', function (data) {
-		console.log('test', data);
-	});
-
 	socket.on('insert', function (data) {
-		console.log('insert', data);
-		const sql = 'INSERT INTO {0} ({1}) VALUES({2})';
+		const sql = 'INSERT INTO `{0}` ({1}) VALUES({2})';
 
 		let keys = [];
 		let values = [];
@@ -63,7 +50,6 @@ socketServer.on('connection', function (socket) {
 		}
 
 		const query = String.format(sql, data.table, keys.join(', '), values.join(', '));
-		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
@@ -76,8 +62,7 @@ socketServer.on('connection', function (socket) {
 	});
 
 	socket.on('delete', function (data) {
-		console.log('delete', data);
-		const sql = 'DELETE FROM {0} WHERE {1}';
+		const sql = 'DELETE FROM `{0}` WHERE {1}';
 
 		let conditions = [];
 
@@ -96,7 +81,6 @@ socketServer.on('connection', function (socket) {
 		}
 
 		const query = String.format(sql, data.table, conditions.join(' AND '));
-		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
@@ -109,8 +93,7 @@ socketServer.on('connection', function (socket) {
 	});
 
 	socket.on('update', function (data) {
-		console.log('update', data);
-		const sql = 'UPDATE {0} SET {1} WHERE {2}';
+		const sql = 'UPDATE `{0}` SET {1} WHERE {2}';
 
 		let values = [];
 		let conditions = [];
@@ -139,7 +122,6 @@ socketServer.on('connection', function (socket) {
 		}
 
 		const query = String.format(sql, data.table, values.join(', '), conditions.join(' AND '));
-		console.log(query);
 
 		if (connection) {
 			connection.query(query, function (error, result) {
