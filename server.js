@@ -19,6 +19,11 @@ if (!String.format) {
 }
 
 function dbConnection() {
+	if (connection && connection.disconnect) {
+		console.log('reconnecting');
+		connection.disconnect();
+	}
+
 	connection = mysql.createConnection({
 		host: config.dbHost ? config.dbHost : 'localhost',
 		user: config.dbUser ? config.dbUser : 'root',
@@ -120,13 +125,16 @@ socketServer.on('connection', function (socket) {
 
 		for (const key of data.changedColumns) {
 			let value = data.values[key];
-			if (value === null) {
-				value = 'NULL';
+			if (key === 'conditions') {
+				continue;
+			} else if (value === null) {
+				values.push('NULL');
 			} else if (typeof value === 'string' && value.indexOf('.000Z') > 0) {
 				value = value.replace('T', ' ').replace('.000Z', '');
+				values.push('`' + key + '` = "' + value + '"');
+			} else {
+				values.push('`' + key + '` = "' + value + '"');
 			}
-
-			values.push('`' + key + '` = "' + value + '"');
 		}
 
 		for (const key in data.values) {
