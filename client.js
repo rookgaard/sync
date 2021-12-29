@@ -20,7 +20,7 @@ socketClient.on('disconnect', function () {
 });
 
 function insertRow(newRow) {
-	console.log('insertRow', newRow);
+//	console.log('insertRow', newRow);
 	socketClient.emit('insert', {
 		apiPassword: config.apiPassword,
 		table: newRow.table,
@@ -29,7 +29,7 @@ function insertRow(newRow) {
 }
 
 function deleteRow(oldRow) {
-	console.log('deleteRow', oldRow);
+//	console.log('deleteRow', oldRow);
 	socketClient.emit('delete', {
 		apiPassword: config.apiPassword,
 		table: oldRow.table,
@@ -38,7 +38,7 @@ function deleteRow(oldRow) {
 }
 
 function updateRow(newRow) {
-	console.log('updateRow', newRow);
+//	console.log('updateRow', newRow);
 	socketClient.emit('update', {
 		apiPassword: config.apiPassword,
 		table: newRow.table,
