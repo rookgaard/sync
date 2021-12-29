@@ -19,8 +19,7 @@ if (!String.format) {
 }
 
 function dbConnection() {
-	if (connection && connection.disconnect) {
-		console.log('reconnecting');
+	if (connection) {
 		connection.disconnect();
 	}
 
