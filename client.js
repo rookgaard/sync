@@ -69,7 +69,7 @@ function valuesChanged(oldRow, newRow, event) {
 	}
 
 	if (oldRow !== null && newRow !== null) {
-		if (tables.indexOf(oldRow.table) < 0) {
+		if (tables.indexOf(newRow.table) < 0) {
 			return;
 		}
 

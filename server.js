@@ -19,7 +19,7 @@ if (!String.format) {
 }
 
 function dbConnection() {
-	if (connection) {
+	if (connection && typeof connection.disconnect === 'function') {
 		connection.disconnect();
 	}
 
@@ -44,13 +44,15 @@ socketServer.on('connection', function (socket) {
 			return;
 		}
 
-		const sql = 'INSERT INTO `{0}` ({1}) VALUES({2})';
+		const sql = 'INSERT INTO `{0}` ({1}) VALUES({2}) ON DUPLICATE KEY UPDATE {3}';
 
 		let keys = [];
+		let updated = [];
 		let values = [];
 
 		for (const key in data.values) {
 			keys.push('`' + key + '`');
+			updated.push('`' + key + '` = VALUES(`' + key + '`)');
 			let value = data.values[key];
 
 			if (value === null) {
@@ -63,7 +65,7 @@ socketServer.on('connection', function (socket) {
 			}
 		}
 
-		const query = String.format(sql, data.table, keys.join(', '), values.join(', '));
+		const query = String.format(sql, data.table, keys.join(', '), values.join(', '), updated.join(', '));
 		console.log(query);
 
 		if (connection) {
@@ -124,7 +126,7 @@ socketServer.on('connection', function (socket) {
 
 		for (const key of data.changedColumns) {
 			let value = data.values[key];
-			if (key === 'conditions') {
+			if (key === 'conditions' || key === 'created') {
 				continue;
 			} else if (value === null) {
 				values.push('NULL');
@@ -148,6 +150,10 @@ socketServer.on('connection', function (socket) {
 			if (key === 'id' || conditions.length >= 3) {
 				break;
 			}
+		}
+
+		if (values.length === 0) {
+			return;
 		}
 
 		const query = String.format(sql, data.table, values.join(', '), conditions.join(' AND '));
